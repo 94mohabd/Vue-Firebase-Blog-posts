@@ -1,4 +1,4 @@
-# dojo-blog
+# Vue-Firebase-Blog-posts
 
 ## Project setup
 ```
@@ -17,4 +17,4 @@ npm run build
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
-# Vue-Firebase-Blog-posts
+
