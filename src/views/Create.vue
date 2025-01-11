@@ -3,10 +3,15 @@
     <form>
       <label>Title</label>
       <input v-model="title" type="text" required />
+      <p v-if="errors.title" class="error">{{ errors.title }}</p>
+
       <label>Content</label>
       <textarea v-model="body" required></textarea>
+      <p v-if="errors.body" class="error">{{ errors.body }}</p>
+
       <label>Tags (hit enter to add a tag)</label>
       <input v-model="tag" type="text" @keydown.enter.prevent="handleKeyDown" />
+
       <div v-for="tag in tags" :key="tag" class="pill">#{{ tag }}</div>
       <button @click.prevent="handleSubmit">Add Post</button>
     </form>
@@ -25,7 +30,7 @@ export default {
     const body = ref("");
     const tag = ref("");
     const tags = ref([]);
-
+    const errors = ref({ title: "", body: "" });
     const router = useRouter();
 
     const handleKeyDown = () => {
@@ -37,16 +42,30 @@ export default {
     };
 
     const handleSubmit = async () => {
+      errors.value.title = "";
+      errors.value.body = "";
+      // Validate fields
+      if (!title.value.trim()) {
+        errors.value.title = "Title is required.";
+      }
+      if (!body.value.trim()) {
+        errors.value.body = "Content is required.";
+      }
+
+      // If there are errors, stop submission
+      if (errors.value.title || errors.value.body) {
+        return;
+      }
       const post = {
         title: title.value,
         body: body.value,
         tags: tags.value,
         createdAt: timestamp(),
       };
-      addPost(post, router);
+      await addPost(post, router);
     };
 
-    return { title, body, tag, handleKeyDown, tags, handleSubmit };
+    return { title, body, tag, tags, errors, handleKeyDown, handleSubmit };
   },
 };
 </script>
@@ -97,6 +116,7 @@ button {
   border: none;
   padding: 8px 16px;
   font-size: 18px;
+  cursor: pointer;
 }
 .pill {
   display: inline-block;
@@ -106,5 +126,10 @@ button {
   padding: 8px;
   border-radius: 20px;
   font-size: 14px;
+}
+.error {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 5px;
 }
 </style>

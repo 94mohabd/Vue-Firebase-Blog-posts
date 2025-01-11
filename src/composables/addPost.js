@@ -3,6 +3,9 @@ import { collection, addDoc } from "firebase/firestore";
 
 const addPost = async (post, router) => {
     try {
+        if (!post.title || !post.body) {
+            throw new Error("Title and body are required.");
+        }
         const colRef = collection(projectFirestore, 'posts');
         // Add the new document to the collection
         await addDoc(colRef, post);
